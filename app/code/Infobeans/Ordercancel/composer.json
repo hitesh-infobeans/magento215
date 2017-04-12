@@ -1,0 +1,26 @@
+{
+  "name": "infobeans/magento2-ordercancel",
+  "description": "Infobeans Order Cancel by Customer",
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "InfoBeans",
+      "email": "magentosupport@infobeans.com"
+    }
+  ],
+  "license": [
+    "OSL-3.0"
+  ],
+  "require": {
+    "php": "~5.5.22|~5.6.0|7.0.0|7.0.1|7.0.2|7.0.3|7.0.4|~7.0.6"
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Infobeans\\Ordercanel\\": ""
+    }
+  }
+}
