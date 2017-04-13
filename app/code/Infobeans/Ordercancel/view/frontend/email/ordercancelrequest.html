@@ -1,4 +1,4 @@
-<!--@subject {{trans "Your Order#: %order_number has been canceled" order_number=$order.increment_id}} @-->
+<!--@subject {{trans "Received request for Cancel the Order#: %order_number" order_number=$order.increment_id}} @-->
 <!--@vars
 {"store url=\"\"":"Store Url",
 "skin url=\"images/logo_email.gif\" _area='frontend'":"Email Logo Image"}
@@ -22,7 +22,8 @@ body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif;
                                     <tbody>
                                         <tr>
                                             <td colspan="2" valign="top" style="font-size:12px;padding:7px 9px 9px 9px;border:1px solid #EAEAEA;">
-                                                {{trans "Your Order#: %order_number has been canceled successfully" customer_name=$order.getCustomerName() order_number=$order.increment_id}}
+                                               {{trans "We have received your order canceletion request for Order#: %order_number" order_number=$order.increment_id}}
+                                               {{trans "You will receive your refund within 2-3 working days"}}
                                             </td>
                                         </tr>
                                     </tbody>

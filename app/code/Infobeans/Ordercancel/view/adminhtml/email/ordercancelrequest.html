@@ -1,0 +1,11 @@
+<!--@subject {{trans "Request for Cancel Order#: %order_number" order_number=$order.increment_id}} @-->
+<!--@vars {
+"var store.getFrontendName()|escape":"Store Name"
+} @-->
+{{trans "Hello Admin,"}}
+
+
+{{trans "%customer_name has requested for cancel the Order# : %order_number" customer_name=$order.getCustomerName() order_number=$order.increment_id}}
+
+{{trans "Thank you,"}}
+{{var store.getFrontendName()}}

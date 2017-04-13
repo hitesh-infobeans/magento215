@@ -78,24 +78,11 @@ class Cancel extends \Magento\Framework\App\Action\Action {
     public function execute()
     {
         $post = $this->getRequest()->getPostValue();
+        $canceled=false;
         if (!$post) {
             $this->_redirect('*/*/');
             return;
-        }
-        
-        $error=false;
-        
-        if (!\Zend_Validate::is(trim($post['order_id']), 'NotEmpty')) {
-                $error = true;
-        }
-        
-        if (!\Zend_Validate::is(trim($post['reason']), 'NotEmpty')) {
-                $error = true;
-        }
-        
-        if ($error) {
-            throw new \Exception();
-        }
+        } 
         
         $resultRedirect = $this->resultRedirectFactory->create();
         
@@ -103,38 +90,61 @@ class Cancel extends \Magento\Framework\App\Action\Action {
         if ($order) {
             try {
                 
-               $message="Hello";
-                $this->helper->sendOrderCancelMailToCustomer($order->getCustomerEmail(),$order->getCustomerName(),$message);
-                exit;
+                $error=false;
+        
+                if (!\Zend_Validate::is(trim($post['order_id']), 'NotEmpty')) {
+                        $error = true;
+                }
+                    
+                if ($this->helper-isCommentEnable() && !\Zend_Validate::is(trim($post['reason']), 'NotEmpty')) {
+                        $error = true;
+                }
+
+                if ($error) {
+                    throw new \Exception();
+                }
                 
-                $reason = $this->_escaper->escapeHtml(trim($post['reason'])); 
+                 
+                $reason = $this->escaper->escapeHtml(trim($post['reason'])); 
                 
                 if ($order->canCancel()) {
                     $this->orderManagement->cancel($order->getEntityId());
-                    $order->addStatusHistoryComment(
-                                __("<strong>Reason</strong> : $reason<br><br>"
-                                        . "Canceled by Customer")
-                        )
-                    ->setIsCustomerNotified(false)
-                    ->save();
+                    $canceled=true;
+                    $frontendEmailTemplate="ordercancel_template";
+                    $adminEmailTemplate="admin_ordercancel_template";
+                    $message="Your order ".$order->getIncrementId()." has been cancelled successfully";
                     
                 }
                 else if ($order->getState()==\Magento\Sales\Model\Order::STATE_PROCESSING)
                 { 
-                    $order->setStatus(self::STATUS_CANCEL_REQUEST);
+                    
+                    $order->setStatus(self::STATUS_CANCEL_REQUEST);                   
+                    $order->save(); 
+                    $canceled=true;
+                    $frontendEmailTemplate="ordercancelrequest_template";
+                    $adminEmailTemplate="admin_ordercancelrequest_template";
+                    
+                    
+                } 
+                
+                if($canceled)
+                {
                     $order->addStatusHistoryComment(
                                 __("<strong>Reason</strong> : $reason<br><br>"
                                         . "Canceled by Customer")
                         )
-                    ->setIsCustomerNotified(false)
-                    ->save();
-                } 
+                        ->setIsCustomerNotified(false)
+                        ->save(); 
                 
-                $this->messageManager->addSuccess(__('You canceled the order.'));
+                    // Send Email Notification
+                    $this->helper->sendOrderCancelMailToCustomer($order,$frontendEmailTemplate);
+                    $this->helper->sendOrderCancelMailToAdmin($order,$adminEmailTemplate);
+                    $this->messageManager->addSuccess(__('You canceled the order.'));
+                } 
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
-                $this->messageManager->addError(__('You have not canceled the item.'));
+                $this->messageManager->addError(__('Something is Wrong. Please try again'));
                 $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             }
             return $resultRedirect->setPath($this->_redirect->getRefererUrl());

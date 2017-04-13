@@ -17,20 +17,28 @@
                  <field id="enable_comment" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Comment Box</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="ordercancel_message" translate="label" type="textarea" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Message after order cancel</label>
-                </field> 
+                </field>                
                 <field id="email_to" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Email to</label>
+                    <validate>required-entry validate-email</validate>
                     <comment><![CDATA[Email notification sent to admin]]></comment>
                 </field>
                 <field id="email_sender" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Email Sender</label>
+                    <validate>required-entry validate-email</validate>
                     <comment><![CDATA[Email notification sent to customer from sender email]]></comment>
                 </field>
                 <field id="email_sender_name" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Email Sender Name</label>
+                    <validate>required-entry</validate>
+                </field>               
+                <field id="ordercancel_message_pendingorder" translate="label" type="textarea" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <validate>required-entry</validate>
+                    <label>Message after order cancel (Pending Order)</label>
+                </field>               
+                <field id="ordercancel_message_paidorder" translate="label" type="textarea" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <validate>required-entry</validate>
+                    <label>Message after order cancel (Paid Order)</label>
                 </field>               
             </group>
         </section>

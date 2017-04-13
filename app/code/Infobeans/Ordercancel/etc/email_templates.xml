@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
     <template id="ordercancel_template" label="Order Cancel" file="ordercancel.html" type="html" module="Infobeans_Ordercancel" area="frontend"/>
+    <template id="ordercancelrequest_template" label="Order Cancel Request" file="ordercancelrequest.html" type="html" module="Infobeans_Ordercancel" area="frontend"/>
+    <template id="admin_ordercancel_template" label="Order Cancel Notification" file="ordercancelnotificaiton.html" type="text" module="Infobeans_Ordercancel" area="adminhtml"/>
+    <template id="admin_ordercancelrequest_template" label="Order Cancel Request Notification" file="ordercancelrequest.html" type="text" module="Infobeans_Ordercancel" area="adminhtml"/>
 </config>
