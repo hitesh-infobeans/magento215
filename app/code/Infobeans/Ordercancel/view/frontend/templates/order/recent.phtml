@@ -45,7 +45,8 @@
                                     </a>
                                 <?php endif ?>
                                 <?php if ($this->helper('Infobeans\Ordercancel\Helper\Data')->canCancel($_order)) : ?>
-                                <a href="javascript:;" id="order-id-<?php echo $_order->getId();?>" data-bind="click: function(){ showPopup('<?php echo $_order->getId()?>'); }" class="cancelorder">
+                                
+                                <a href="javascript:;" data-bind="click: function(){ showPopup('<?php echo $_order->getId()?>'); }" class="cancelorder">
                                     <span><?php /* @escapeNotVerified */ echo __('Cancel') ?></span>
                                 </a>
                                 <?php endif;?>
@@ -60,33 +61,26 @@
         <div class="message info empty"><span><?php /* @escapeNotVerified */ echo __('You have placed no orders.'); ?></span></div>
     <?php endif; ?>
     </div>
-    
-<div id="popup-modal" style="display:none">
-    <form name="frmcancelorder" method="post" id="frmcancelorder" action="<?php echo $block->getOrderCancelUrl();?>">
-        <input type="hidden" name="order_id" id="order_id" data-bind="value:orderId" value="" />
-        <div>
-            <textarea name="reason" id="reason"></textarea>
-             
-        </div>
-    </form>
+ 
+<!-- ko template: getTemplate() --><!-- /ko -->
 </div>
-</div>
-
-
-
+<script type="text/javascript">
+    window.orderCancelUrl="<?php echo $block->getOrderCancelUrl(); ?>";   
+    window.isCommentEnable=parseInt("<?php echo $this->helper('Infobeans\Ordercancel\Helper\Data')->isCommentEnable(); ?>");   
+</script> 
 <script type="text/x-magento-init">
     {
         "#recent-orders": {
             "Magento_Ui/js/core/app": {
                "components": {
                     "recentorders": {
-                        "component": "Infobeans_Ordercancel/js/ordercancel"
+                        "component": "Infobeans_Ordercancel/js/ordercancel"                        
                     }
                 }
             }
         }
     }
-    </script>
+</script>
 
 
 

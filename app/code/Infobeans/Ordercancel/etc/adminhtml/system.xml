@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="infobeans_faq" translate="label" sortOrder="1000">
+        <tab id="infobeans_ordercancel" translate="label" sortOrder="1000">
             <label>Infobeans</label>
         </tab>
-        <section id="faq_section" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+        <section id="ordercancel_section" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Order Cancel Configuration</label>
-            <tab>infobeans_faq</tab>
+            <tab>infobeans_ordercancel</tab>
             <resource>Infobeans_Ordercancel::config</resource>
            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>

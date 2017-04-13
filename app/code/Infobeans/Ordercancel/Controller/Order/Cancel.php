@@ -19,6 +19,11 @@ class Cancel extends \Magento\Framework\App\Action\Action {
     
     protected $_coreRegistry = null;
     
+    protected $escaper;
+    
+    protected $helper;
+
+
     /**
      * Constructor
      * 
@@ -30,13 +35,17 @@ class Cancel extends \Magento\Framework\App\Action\Action {
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,        
         OrderRepositoryInterface $orderRepository,
         OrderManagementInterface $orderManagement,
-        \Magento\Framework\Registry $coreRegistry
+        \Magento\Framework\Registry $coreRegistry,
+        \Magento\Framework\Escaper $escaper,
+        \Infobeans\Ordercancel\Helper\Data $helper
     )
     {
         $this->_coreRegistry = $coreRegistry;
         $this->resultPageFactory = $resultPageFactory;
         $this->orderRepository=$orderRepository;
         $this->orderManagement=$orderManagement;
+        $this->escaper = $escaper;
+        $this->helper = $helper;
         parent::__construct($context);
     }
     
@@ -56,8 +65,7 @@ class Cancel extends \Magento\Framework\App\Action\Action {
             $this->_actionFlag->set('', self::FLAG_NO_DISPATCH, true);
             return false;
         }
-        $this->_coreRegistry->register('sales_order', $order);
-        $this->_coreRegistry->register('current_order', $order);
+        
         return $order;
     } 
     
@@ -69,15 +77,37 @@ class Cancel extends \Magento\Framework\App\Action\Action {
      */
     public function execute()
     {
-       
+        $post = $this->getRequest()->getPostValue();
+        if (!$post) {
+            $this->_redirect('*/*/');
+            return;
+        }
+        
+        $error=false;
+        
+        if (!\Zend_Validate::is(trim($post['order_id']), 'NotEmpty')) {
+                $error = true;
+        }
+        
+        if (!\Zend_Validate::is(trim($post['reason']), 'NotEmpty')) {
+                $error = true;
+        }
+        
+        if ($error) {
+            throw new \Exception();
+        }
+        
         $resultRedirect = $this->resultRedirectFactory->create();
         
         $order = $this->_initOrder();
         if ($order) {
             try {
                 
-                $reason = $this->getRequest()->getPost('reason');
+               $message="Hello";
+                $this->helper->sendOrderCancelMailToCustomer($order->getCustomerEmail(),$order->getCustomerName(),$message);
+                exit;
                 
+                $reason = $this->_escaper->escapeHtml(trim($post['reason'])); 
                 
                 if ($order->canCancel()) {
                     $this->orderManagement->cancel($order->getEntityId());
@@ -89,7 +119,7 @@ class Cancel extends \Magento\Framework\App\Action\Action {
                     ->save();
                     
                 }
-                else if ($order->getStatus()=="processing")
+                else if ($order->getState()==\Magento\Sales\Model\Order::STATE_PROCESSING)
                 { 
                     $order->setStatus(self::STATUS_CANCEL_REQUEST);
                     $order->addStatusHistoryComment(
@@ -98,7 +128,8 @@ class Cancel extends \Magento\Framework\App\Action\Action {
                         )
                     ->setIsCustomerNotified(false)
                     ->save();
-                }
+                } 
+                
                 $this->messageManager->addSuccess(__('You canceled the order.'));
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());

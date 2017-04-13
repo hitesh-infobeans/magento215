@@ -1,5 +1,5 @@
 <div id="popup-modal" style="display:none">
-    <form name="frmcancelorder" method="post" id="frmcancelorder">
+    <form name="frmcancelorder" method="post" id="frmcancelorder" data-bind="attr: { action: orderCancelUrl }">
         <input type="hidden" name="order_id" id="order_id" data-bind="value:orderId" value="" />
         <div>
             <textarea name="reason" id="reason"></textarea>
