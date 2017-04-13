@@ -39,7 +39,7 @@ class Cancel extends \Magento\Framework\App\Action\Action {
         \Magento\Framework\Escaper $escaper,
         \Infobeans\Ordercancel\Helper\Data $helper
     )
-    {
+    {   
         $this->_coreRegistry = $coreRegistry;
         $this->resultPageFactory = $resultPageFactory;
         $this->orderRepository=$orderRepository;
@@ -50,8 +50,8 @@ class Cancel extends \Magento\Framework\App\Action\Action {
     }
     
     
-   protected function _initOrder()
-    {
+    protected function _initOrder()
+    {  
         $id = $this->getRequest()->getPost('order_id');
          
         try {
@@ -69,21 +69,21 @@ class Cancel extends \Magento\Framework\App\Action\Action {
         return $order;
     } 
     
-
-    /**
-     * Execute view action
-     * 
-     * @return \Magento\Framework\Controller\ResultInterface
-     */
     public function execute()
     {
+        if(!$this->helper->isModuleEnable())
+        {
+            $this->_redirect('*/*/');
+            return;
+        }
+        
         $post = $this->getRequest()->getPostValue();
         $canceled=false;
         if (!$post) {
             $this->_redirect('*/*/');
             return;
         } 
-        
+       
         $resultRedirect = $this->resultRedirectFactory->create();
         
         $order = $this->_initOrder();
@@ -96,7 +96,7 @@ class Cancel extends \Magento\Framework\App\Action\Action {
                         $error = true;
                 }
                     
-                if ($this->helper-isCommentEnable() && !\Zend_Validate::is(trim($post['reason']), 'NotEmpty')) {
+                if ($this->helper->isCommentEnable() && !\Zend_Validate::is(trim($post['reason']), 'NotEmpty')) {
                         $error = true;
                 }
 
@@ -104,7 +104,6 @@ class Cancel extends \Magento\Framework\App\Action\Action {
                     throw new \Exception();
                 }
                 
-                 
                 $reason = $this->escaper->escapeHtml(trim($post['reason'])); 
                 
                 if ($order->canCancel()) {
@@ -112,7 +111,7 @@ class Cancel extends \Magento\Framework\App\Action\Action {
                     $canceled=true;
                     $frontendEmailTemplate="ordercancel_template";
                     $adminEmailTemplate="admin_ordercancel_template";
-                    $message="Your order ".$order->getIncrementId()." has been cancelled successfully";
+                    $message=$this->helper->getPendingOrderMessage();
                     
                 }
                 else if ($order->getState()==\Magento\Sales\Model\Order::STATE_PROCESSING)
@@ -123,7 +122,7 @@ class Cancel extends \Magento\Framework\App\Action\Action {
                     $canceled=true;
                     $frontendEmailTemplate="ordercancelrequest_template";
                     $adminEmailTemplate="admin_ordercancelrequest_template";
-                    
+                    $message=$this->helper->getPaidOrderMessage();
                     
                 } 
                 
@@ -139,7 +138,7 @@ class Cancel extends \Magento\Framework\App\Action\Action {
                     // Send Email Notification
                     $this->helper->sendOrderCancelMailToCustomer($order,$frontendEmailTemplate);
                     $this->helper->sendOrderCancelMailToAdmin($order,$adminEmailTemplate);
-                    $this->messageManager->addSuccess(__('You canceled the order.'));
+                    $this->messageManager->addSuccess(__($message));
                 } 
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());

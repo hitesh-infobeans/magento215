@@ -12,6 +12,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     
     protected $inlineTranslation;
     
+    const STATUS_CANCEL_REQUEST = 'cancel_request';    
+    
     const XML_PATH_ENABLE_MODULE = 'ordercancel_section/general/enable_module';
     
     const XML_PATH_ENABLE_COMMENT = 'ordercancel_section/general/enable_comment';
@@ -24,7 +26,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     
     const XML_PATH_PENDING_ORDER_MESSAGE = 'ordercancel_section/general/ordercancel_message_pendingorder';
     
-    const XML_PATH_PAID_ORDER_MESSAGE = 'ordercancel_section/general/ordercancel_message_paidorder';
+    const XML_PATH_PAID_ORDER_MESSAGE = 'ordercancel_section/general/message_paidorder';
     
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -109,12 +111,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         } 
         
         if ($order->canCancel()) {
-            return true; 
+            return "Cancel"; 
         }
          
-        if($order->getStatus()=="processing")
+        if($order->getState()==\Magento\Sales\Model\Order::STATE_PROCESSING && $order->getStatus()!=self::STATUS_CANCEL_REQUEST)
         {
-            return true;
+            return "Cancel Request";
         }
         return false;
     }

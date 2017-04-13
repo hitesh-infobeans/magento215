@@ -20,7 +20,13 @@ define(['jquery', 'uiComponent', 'ko','Magento_Ui/js/modal/modal'], function ($,
                     text: $.mage.__('Submit'),
                     class: '',
                     click: function () {
-                        $('#frmcancelorder').submit();
+                        
+                        if ($('#frmcancelorder').validation() &&
+                            $('#frmcancelorder').validation('isValid')
+                        ){
+                            $('#frmcancelorder').submit();
+                        } 
+                        
                     }
                 }] 
             }; 

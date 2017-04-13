@@ -44,10 +44,10 @@
                                         <span><?php /* @escapeNotVerified */ echo __('Reorder') ?></span>
                                     </a>
                                 <?php endif ?>
-                                <?php if ($this->helper('Infobeans\Ordercancel\Helper\Data')->canCancel($_order)) : ?>
+                                <?php if ($cancelOrder=$this->helper('Infobeans\Ordercancel\Helper\Data')->canCancel($_order)) : ?>
                                 
-                                <a href="javascript:;" data-bind="click: function(){ showPopup('<?php echo $_order->getId()?>'); }" class="cancelorder">
-                                    <span><?php /* @escapeNotVerified */ echo __('Cancel') ?></span>
+                                <a href="javascript:;" data-bind="click: function(){ showPopup('<?php echo $_order->getId()?>'); }">
+                                    <span><?php /* @escapeNotVerified */ echo __($cancelOrder) ?></span>
                                 </a>
                                 <?php endif;?>
                                 
