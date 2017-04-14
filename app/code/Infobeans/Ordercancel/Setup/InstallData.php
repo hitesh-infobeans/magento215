@@ -6,15 +6,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
  
 class InstallData implements InstallDataInterface
-{
-    /**
-     * Installs DB schema for a module
-     *
-     * @param SchemaSetupInterface $setup
-     * @param ModuleContextInterface $context
-     * @return void
-     */
-    
+{ 
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     { 
 

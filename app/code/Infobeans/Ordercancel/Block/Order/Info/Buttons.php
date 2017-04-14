@@ -36,8 +36,11 @@ class Buttons extends \Magento\Framework\View\Element\Template
     public function getOrder()
     {
         return $this->_coreRegistry->registry('current_order');
-    }
+    }    
     
+    /** 
+     * Function for get Order cancel Url 
+     */
     public function getOrderCancelUrl()
     {
         return $this->getUrl('ordercancel/order/cancel');

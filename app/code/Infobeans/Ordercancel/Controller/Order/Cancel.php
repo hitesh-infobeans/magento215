@@ -11,16 +11,36 @@ class Cancel extends \Magento\Framework\App\Action\Action {
     
     const STATUS_CANCEL_REQUEST = 'cancel_request';
     
+    /**
+     * @var \Magento\Framework\View\Result\PageFactory
+     */
     protected $resultPageFactory;
     
+    /**
+     * @var \Magento\Sales\Api\OrderRepositoryInterface
+     */
     protected $orderRepository;
     
+    /**
+     * @var \Magento\Sales\Api\OrderManagementInterface
+     */
     protected $orderManagement;
     
+    /**
+     * Core registry
+     *
+     * @var \Magento\Framework\Registry
+     */
     protected $_coreRegistry = null;
     
+    /**
+     * @var \Magento\Framework\Escaper
+     */
     protected $escaper;
     
+    /**
+     * @var \Infobeans\Ordercancel\Helper\Data
+     */
     protected $helper;
 
 
@@ -49,7 +69,10 @@ class Cancel extends \Magento\Framework\App\Action\Action {
         parent::__construct($context);
     }
     
-    
+    /**
+     * 
+     * @return Order Object
+     */
     protected function _initOrder()
     {  
         $id = $this->getRequest()->getPost('order_id');
@@ -69,13 +92,18 @@ class Cancel extends \Magento\Framework\App\Action\Action {
         return $order;
     } 
     
+    
     public function execute()
     {
         $post = $this->getRequest()->getPostValue();
-        
+                
         if(strpos($this->_redirect->getRefererUrl(),"sales/guest/view")>0)
         {
             $redirectUrl = str_replace("view","form",$this->_redirect->getRefererUrl());
+        }
+        else
+        {
+            $redirectUrl = $this->_redirect->getRefererUrl();
         }
           
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -83,20 +111,18 @@ class Cancel extends \Magento\Framework\App\Action\Action {
         if(!$this->helper->isModuleEnable())
         {
             return $resultRedirect->setPath($redirectUrl);
-            
         } 
          
         $canceled=false;
         
         if (!$post) {
            return $resultRedirect->setPath($redirectUrl);
-        } 
-       
+        }  
         
-        
-        $order = $this->_initOrder();
-        if ($order) {
+        if ($post) {
             try {
+                
+                $order = $this->_initOrder();
                 
                 $error=false;
         
@@ -153,8 +179,7 @@ class Cancel extends \Magento\Framework\App\Action\Action {
             } catch (\Exception $e) {
                 $this->messageManager->addError(__('Something is Wrong. Please try again'));
                 $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
-            }
-            
+            } 
           
             return $resultRedirect->setPath($redirectUrl);
         }

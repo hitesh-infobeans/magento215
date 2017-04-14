@@ -43,7 +43,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         
     }
     
-    
+    /**
+     * Check if Module is enabled or not 
+     */
     public function isModuleEnable()
     {     
         return $this->scopeConfig->getValue(
@@ -52,6 +54,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
     
+    /**
+     * Check if Comment is enabled or not 
+     */
     public function isCommentEnable()
     {     
         return $this->scopeConfig->getValue(
@@ -60,7 +65,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
     
-    
+    /**
+     * Retrieve sender email
+     */
     public function getSenderEmail()
     {     
         return $this->scopeConfig->getValue(
@@ -69,6 +76,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
     
+    /**
+     * Retrieve sender name
+     */
     public function getSenderName()
     {     
         return $this->scopeConfig->getValue(
@@ -77,6 +87,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
     
+    /**
+     * Retrieve Admin email
+     */
     public function getAdminEmail()
     {     
         return $this->scopeConfig->getValue(
@@ -85,6 +98,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
     
+    /**
+     * Retrieve Order message after cancel for pending order
+     */
     public function getPendingOrderMessage()
     {     
         return $this->scopeConfig->getValue(
@@ -93,6 +109,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
     
+    /**
+     * Retrieve Order message after cancel for paid order
+     */
     public function getPaidOrderMessage()
     {     
         return $this->scopeConfig->getValue(
@@ -101,7 +120,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
     
-    
+    /**
+     * check if Order can cancel
+     */
     public function canCancel($order)
     {
                
@@ -121,7 +142,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return false;
     }
     
-    // Send Email to Customer
+    /**
+     * Send Order cancel email to customer
+     */
     public function sendOrderCancelMailToCustomer($order,$emailTemplate)
     {
       
@@ -147,7 +170,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
     
     
-    // Send Email to Customer
+    /**
+     * Send Order cancel email notification to admin
+     */
     public function sendOrderCancelMailToAdmin($order,$emailTemplate)
     {
            $templateOptions = array('area' => \Magento\Framework\App\Area::AREA_ADMINHTML, 'store' => $this->storeManager->getStore()->getId());
