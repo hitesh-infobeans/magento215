@@ -71,20 +71,28 @@ class Cancel extends \Magento\Framework\App\Action\Action {
     
     public function execute()
     {
+        $post = $this->getRequest()->getPostValue();
+        
+        if(strpos($this->_redirect->getRefererUrl(),"sales/guest/view")>0)
+        {
+            $redirectUrl = str_replace("view","form",$this->_redirect->getRefererUrl());
+        }
+          
+        $resultRedirect = $this->resultRedirectFactory->create();
+        
         if(!$this->helper->isModuleEnable())
         {
-            $this->_redirect('*/*/');
-            return;
-        }
-        
-        $post = $this->getRequest()->getPostValue();
+            return $resultRedirect->setPath($redirectUrl);
+            
+        } 
+         
         $canceled=false;
+        
         if (!$post) {
-            $this->_redirect('*/*/');
-            return;
+           return $resultRedirect->setPath($redirectUrl);
         } 
        
-        $resultRedirect = $this->resultRedirectFactory->create();
+        
         
         $order = $this->_initOrder();
         if ($order) {
@@ -146,9 +154,11 @@ class Cancel extends \Magento\Framework\App\Action\Action {
                 $this->messageManager->addError(__('Something is Wrong. Please try again'));
                 $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             }
-            return $resultRedirect->setPath($this->_redirect->getRefererUrl());
+            
+          
+            return $resultRedirect->setPath($redirectUrl);
         }
-        return $resultRedirect->setPath($this->_redirect->getRefererUrl());
+        return $resultRedirect->setPath($redirectUrl);
     }
 }
 

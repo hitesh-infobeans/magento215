@@ -1,0 +1,27 @@
+<?php  $_order = $block->getOrder() ?>
+<span id="order-cancel" data-bind="scope:'ordercancelbutton'">
+<?php if ($cancelOrder=$this->helper('Infobeans\Ordercancel\Helper\Data')->canCancel($_order)) : ?>
+    <a href="javascript:;" data-bind="click: function(){ showPopup('<?php echo $_order->getId()?>'); }">
+        <span><?php /* @escapeNotVerified */ echo __($cancelOrder) ?></span>
+    </a>
+<?php endif;?>
+<!-- ko template: getTemplate() --><!-- /ko -->    
+</span>    
+    
+<script type="text/javascript">
+    window.orderCancelUrl="<?php echo $block->getOrderCancelUrl(); ?>";   
+    window.isCommentEnable=parseInt("<?php echo $this->helper('Infobeans\Ordercancel\Helper\Data')->isCommentEnable(); ?>");   
+</script> 
+<script type="text/x-magento-init">
+    {
+        "#order-cancel": {
+            "Magento_Ui/js/core/app": {
+               "components": {
+                    "ordercancelbutton": {
+                        "component": "Infobeans_Ordercancel/js/ordercancel"                        
+                    }
+                }
+            }
+        }
+    }
+</script>
