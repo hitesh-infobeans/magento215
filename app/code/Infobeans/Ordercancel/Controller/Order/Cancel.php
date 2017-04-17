@@ -1,14 +1,14 @@
-<?php 
-
+<?php
 
 namespace Infobeans\Ordercancel\Controller\Order;
 
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Api\OrderManagementInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\InputException;
  
-class Cancel extends \Magento\Framework\App\Action\Action {
-
-    
+class Cancel extends \Magento\Framework\App\Action\Action
+{
     const STATUS_CANCEL_REQUEST = 'cancel_request';
     
     /**
@@ -42,39 +42,44 @@ class Cancel extends \Magento\Framework\App\Action\Action {
      * @var \Infobeans\Ordercancel\Helper\Data
      */
     protected $helper;
-
+    
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
 
     /**
      * Constructor
-     * 
+     *
      * @param \Magento\Framework\App\Action\Context  $context
      * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,        
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory,        
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
         OrderRepositoryInterface $orderRepository,
         OrderManagementInterface $orderManagement,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Framework\Escaper $escaper,
-        \Infobeans\Ordercancel\Helper\Data $helper
-    )
-    {   
+        \Infobeans\Ordercancel\Helper\Data $helper,
+        \Psr\Log\LoggerInterface $logger
+    ) {
         $this->_coreRegistry = $coreRegistry;
         $this->resultPageFactory = $resultPageFactory;
         $this->orderRepository=$orderRepository;
         $this->orderManagement=$orderManagement;
         $this->escaper = $escaper;
         $this->helper = $helper;
+        $this->logger = $logger;
         parent::__construct($context);
     }
     
     /**
-     * 
+     *
      * @return Order Object
      */
     protected function _initOrder()
-    {  
+    {
         $id = $this->getRequest()->getPost('order_id');
          
         try {
@@ -88,102 +93,91 @@ class Cancel extends \Magento\Framework\App\Action\Action {
             $this->_actionFlag->set('', self::FLAG_NO_DISPATCH, true);
             return false;
         }
-        
         return $order;
-    } 
+    }
     
+    protected function getRedirectUrl()
+    {
+        if (strpos($this->_redirect->getRefererUrl(), "sales/guest/view") !== false) {
+            $redirectUrl = str_replace("view", "form", $this->_redirect->getRefererUrl());
+        } else {
+            $redirectUrl = $this->_redirect->getRefererUrl();
+        }
+        return $redirectUrl;
+    }
+    
+    protected function validateForm($post)
+    {
+        if (!\Zend_Validate::is(trim($post['order_id']), 'NotEmpty')) {            
+            return false;
+        }
+        
+        if ($this->helper->isCommentEnable() && !\Zend_Validate::is(trim($post['reason']), 'NotEmpty')) {
+            return false;
+        }
+        return true;
+    }
     
     public function execute()
     {
         $post = $this->getRequest()->getPostValue();
-                
-        if(strpos($this->_redirect->getRefererUrl(),"sales/guest/view")>0)
-        {
-            $redirectUrl = str_replace("view","form",$this->_redirect->getRefererUrl());
-        }
-        else
-        {
-            $redirectUrl = $this->_redirect->getRefererUrl();
-        }
-          
+       
+        $redirectUrl=$this->getRedirectUrl();
+        
         $resultRedirect = $this->resultRedirectFactory->create();
-        
-        if(!$this->helper->isModuleEnable())
-        {
-            return $resultRedirect->setPath($redirectUrl);
-        } 
          
-        $canceled=false;
+        if (!$this->helper->isModuleEnable()) {
+            return $resultRedirect->setPath($redirectUrl);
+        }
         
-        if (!$post) {
-           return $resultRedirect->setPath($redirectUrl);
-        }  
+        $canceled=false;
         
         if ($post) {
             try {
-                
                 $order = $this->_initOrder();
                 
-                $error=false;
-        
-                if (!\Zend_Validate::is(trim($post['order_id']), 'NotEmpty')) {
-                        $error = true;
-                }
-                    
-                if ($this->helper->isCommentEnable() && !\Zend_Validate::is(trim($post['reason']), 'NotEmpty')) {
-                        $error = true;
-                }
-
-                if ($error) {
-                    throw new \Exception();
+                if (!$this->validateForm($post)) {                     
+                    throw new \Magento\Framework\Exception\LocalizedException();
                 }
                 
-                $reason = $this->escaper->escapeHtml(trim($post['reason'])); 
+                $reason = $this->escaper->escapeHtml(trim($post['reason']));
                 
                 if ($order->canCancel()) {
                     $this->orderManagement->cancel($order->getEntityId());
                     $canceled=true;
-                    $frontendEmailTemplate="ordercancel_template";
-                    $adminEmailTemplate="admin_ordercancel_template";
+                    $frontendEmailTemplate = "ordercancel_template";
+                    $adminEmailTemplate = "admin_ordercancel_template";
                     $message=$this->helper->getPendingOrderMessage();
-                    
-                }
-                else if ($order->getState()==\Magento\Sales\Model\Order::STATE_PROCESSING)
-                { 
-                    
-                    $order->setStatus(self::STATUS_CANCEL_REQUEST);                   
-                    $order->save(); 
+                } elseif ($order->getState()==\Magento\Sales\Model\Order::STATE_PROCESSING) {
+                    $order->setStatus(self::STATUS_CANCEL_REQUEST);
+                    $order->save();
                     $canceled=true;
                     $frontendEmailTemplate="ordercancelrequest_template";
                     $adminEmailTemplate="admin_ordercancelrequest_template";
                     $message=$this->helper->getPaidOrderMessage();
-                    
-                } 
+                }
                 
-                if($canceled)
-                {
+                if ($canceled) {
                     $order->addStatusHistoryComment(
-                                __("<strong>Reason</strong> : $reason<br><br>"
+                        __("<strong>Reason</strong> : $reason<br><br>"
                                         . "Canceled by Customer")
-                        )
+                    )
                         ->setIsCustomerNotified(false)
-                        ->save(); 
+                        ->save();
                 
                     // Send Email Notification
-                    $this->helper->sendOrderCancelMailToCustomer($order,$frontendEmailTemplate);
-                    $this->helper->sendOrderCancelMailToAdmin($order,$adminEmailTemplate);
+                    $this->helper->sendOrderCancelMailToCustomer($order, $frontendEmailTemplate);
+                    $this->helper->sendOrderCancelMailToAdmin($order, $adminEmailTemplate);
                     $this->messageManager->addSuccess(__($message));
-                } 
+                }
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
                 $this->messageManager->addError(__('Something is Wrong. Please try again'));
-                $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
-            } 
-          
+                $this->logger->critical($e);
+            }
             return $resultRedirect->setPath($redirectUrl);
         }
         return $resultRedirect->setPath($redirectUrl);
     }
 }
-

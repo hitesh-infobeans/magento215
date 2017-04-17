@@ -4,28 +4,25 @@ namespace Infobeans\Ordercancel\Block\Order\Info;
 
 class Buttons extends \Magento\Framework\View\Element\Template
 {
- 
     /**
      * Core registry
      *
      * @var \Magento\Framework\Registry
      */
     protected $_coreRegistry = null;
- 
      
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \Magento\Framework\Registry $registry     
+     * @param \Magento\Framework\Registry $registry
      * @param array $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        \Magento\Framework\Registry $registry,        
+        \Magento\Framework\Registry $registry,
         array $data = []
     ) {
-        $this->_coreRegistry = $registry;        
+        $this->_coreRegistry = $registry;
         parent::__construct($context, $data);
-        
     }
  
     /**
@@ -36,14 +33,13 @@ class Buttons extends \Magento\Framework\View\Element\Template
     public function getOrder()
     {
         return $this->_coreRegistry->registry('current_order');
-    }    
+    }
     
-    /** 
-     * Function for get Order cancel Url 
+    /**
+     * Function for get Order cancel Url
      */
     public function getOrderCancelUrl()
     {
         return $this->getUrl('ordercancel/order/cancel');
     }
- 
 }

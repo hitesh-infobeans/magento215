@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+     <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+        <default>
+            <ordercancel_section>
+                <general>
+                    <enable_module>1</enable_module>
+                    <enable_comment>1</enable_comment>
+                    <email_to>example@example.com</email_to>
+                    <identity>sales</identity>                    
+                    <ordercancel_message_pendingorder>Your Order has been canceled successfully</ordercancel_message_pendingorder>
+                    <ordercancel_message_paidorder>Your Order has been canceled successfully. Your refund will be processed within 2-3 working days.</ordercancel_message_paidorder>
+                    <ordercancel_template>ordercancel_section_general_ordercancel_template</ordercancel_template>
+                    <ordercancelrequest_template>ordercancel_section_general_ordercancelrequest_template</ordercancelrequest_template>
+                </general>
+            </ordercancel_section>
+        </default>
+    </config>

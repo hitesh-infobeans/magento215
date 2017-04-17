@@ -23,15 +23,10 @@
                     <validate>required-entry validate-email</validate>
                     <comment><![CDATA[Email notification sent to admin]]></comment>
                 </field>
-                <field id="email_sender" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Email Sender</label>
-                    <validate>required-entry validate-email</validate>
-                    <comment><![CDATA[Email notification sent to customer from sender email]]></comment>
-                </field>
-                <field id="email_sender_name" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Email Sender Name</label>
-                    <validate>required-entry</validate>
-                </field>               
+                <field id="identity" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Order Cancel Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>    
                 <field id="ordercancel_message_pendingorder" translate="label" type="textarea" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
                     <validate>required-entry</validate>
                     <label>Message after order cancel (Pending Order)</label>
@@ -39,7 +34,17 @@
                 <field id="ordercancel_message_paidorder" translate="label" type="textarea" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
                     <validate>required-entry</validate>
                     <label>Message after order cancel (Paid Order)</label>
-                </field>               
+                </field>
+                <field id="ordercancel_template" translate="label comment" type="select" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order Cancel Email Template (Pending Order)</label>                
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <comment>Email template chosen based on theme fallback when "Default" option is selected.</comment>
+                </field>      
+                <field id="ordercancelrequest_template" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order Cancel Email Template Paid Order)</label>                
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <comment>Email template chosen based on theme fallback when "Default" option is selected.</comment>
+                </field>      
             </group>
         </section>
     </system>
