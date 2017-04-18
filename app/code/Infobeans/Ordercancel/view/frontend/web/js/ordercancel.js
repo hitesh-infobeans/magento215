@@ -1,6 +1,6 @@
 define(
-    ['jquery', 'uiComponent', 'ko', 'Magento_Ui/js/modal/modal'],
-    function ($, Component, ko,modal) {
+    ['jquery', 'uiComponent', 'ko', 'Magento_Ui/js/modal/modal','Magento_Ui/js/modal/confirm'],
+    function ($, Component, ko,modal,confirmation) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -34,13 +34,22 @@ define(
             
             this.orderId(orderid);
             
-            if (window.isCommentEnable) {
-                var popup = modal(options, $('#popup-modal'));
-
-                $('#popup-modal').modal('openModal');
-            } else {
-                $('#frmcancelorder').submit();
-            }
+            confirmation({
+                title: 'Confirmation',
+                content: 'Are you sure you want to cancel the order',
+                actions: {
+                    confirm: function(){                        
+                        if (window.isCommentEnable) {
+                            var popup = modal(options, $('#popup-modal'));
+                            $('#popup-modal').modal('openModal');
+                        } else {
+                            $('#frmcancelorder').submit();
+                        }
+                    },
+                    cancel: function(){},
+                }
+            });
+             
                
         }
             
