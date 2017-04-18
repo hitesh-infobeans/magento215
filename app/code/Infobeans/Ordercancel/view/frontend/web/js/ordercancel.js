@@ -38,7 +38,7 @@ define(
                 title: 'Confirmation',
                 content: 'Are you sure you want to cancel the order',
                 actions: {
-                    confirm: function(){                        
+                    confirm: function () {
                         if (window.isCommentEnable) {
                             var popup = modal(options, $('#popup-modal'));
                             $('#popup-modal').modal('openModal');
@@ -46,7 +46,7 @@ define(
                             $('#frmcancelorder').submit();
                         }
                     },
-                    cancel: function(){},
+                    cancel: function () {},
                 }
             });
              
