@@ -108,7 +108,7 @@ class Cancel extends \Magento\Framework\App\Action\Action
     
     protected function validateForm($post)
     {
-        if (!\Zend_Validate::is(trim($post['order_id']), 'NotEmpty')) {            
+        if (!\Zend_Validate::is(trim($post['order_id']), 'NotEmpty')) {
             return false;
         }
         
@@ -136,7 +136,7 @@ class Cancel extends \Magento\Framework\App\Action\Action
             try {
                 $order = $this->_initOrder();
                 
-                if (!$this->validateForm($post)) {                     
+                if (!$this->validateForm($post)) {
                     throw new \Magento\Framework\Exception\LocalizedException();
                 }
                 

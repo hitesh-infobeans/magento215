@@ -125,7 +125,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
     
-    
     /**
      * check if Order can cancel
      */
@@ -155,7 +154,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->scopeConfig->getValue(
             self::XML_PATH_EMAIL_IDENTITY,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );  
+        );
     }
     
     /**
@@ -170,10 +169,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $templateVars = [
                             'store' => $this->storeManager->getStore(),
                             'order' => $order,
-                        ]; 
+                        ];
        
-       
-        $template = $this->getEmailTemplateConfig($emailTemplate); 
+        $template = $this->getEmailTemplateConfig($emailTemplate);
         $this->inlineTranslation->suspend();
         $to = [$order->getCustomerEmail()];
         $transport = $this->_transportBuilder->setTemplateIdentifier($template)
@@ -199,8 +197,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                             'store' => $this->storeManager->getStore(),
                             'order'=>$order,
                         ];
-           
-        
+                   
         $this->inlineTranslation->suspend();
         $to = [$this->getAdminEmail()];
         $transport = $this->_transportBuilder->setTemplateIdentifier($emailTemplate)
