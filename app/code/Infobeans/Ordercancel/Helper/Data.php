@@ -62,28 +62,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
     
     /**
-     * Retrieve sender email
-     */
-    public function getSenderEmail()
-    {
-        return $this->scopeConfig->getValue(
-            self::XML_PATH_SENDER_EMAIL,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
-    }
-    
-    /**
-     * Retrieve sender name
-     */
-    public function getSenderName()
-    {
-        return $this->scopeConfig->getValue(
-            self::XML_PATH_SENDER_NAME,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
-    }
-    
-    /**
      * Retrieve Admin email
      */
     public function getAdminEmail()
