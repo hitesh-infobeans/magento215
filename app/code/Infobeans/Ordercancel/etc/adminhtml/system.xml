@@ -17,7 +17,12 @@
                  <field id="enable_comment" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Reason Box</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>                
+                </field>        
+                <field id="max_days_to_cancel" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Maximum days to cancel order</label>
+                    <validate>required-entry validate-digit</validate>
+                     <comment><![CDATA[This should be update in your policy manually]]></comment>                 
+                </field>
                 <field id="email_to" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Email to</label>
                     <validate>required-entry validate-email</validate>
@@ -26,7 +31,11 @@
                 <field id="identity" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Order Cancel Email Sender</label>
                     <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
-                </field>    
+                </field>   
+                <field id="ordercancel_confirmmessage" translate="label" type="textarea" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <validate>required-entry</validate>
+                    <label>Confirmation Popup Message</label>
+                </field> 
                 <field id="ordercancel_message_pendingorder" translate="label" type="textarea" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
                     <validate>required-entry</validate>
                     <label>Message after order cancel (Pending Order)</label>

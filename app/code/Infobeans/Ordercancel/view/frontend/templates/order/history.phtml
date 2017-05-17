@@ -60,7 +60,8 @@
     <div class="message info empty"><span><?php /* @escapeNotVerified */ echo __('You have placed no orders.'); ?></span></div>
 <?php endif ?>
 <script type="text/javascript">
-    window.orderCancelUrl="<?php echo $block->getOrderCancelUrl(); ?>";   
+    window.orderCancelUrl="<?php echo $block->getOrderCancelUrl(); ?>";
+    window.popupConfirmMessage="<?php echo $this->helper('Infobeans\Ordercancel\Helper\Data')->getPopupMessage(); ?>";
     window.isCommentEnable=parseInt("<?php echo $this->helper('Infobeans\Ordercancel\Helper\Data')->isCommentEnable(); ?>");   
 </script> 
 <script type="text/x-magento-init">

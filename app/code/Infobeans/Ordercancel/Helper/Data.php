@@ -12,6 +12,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     
     protected $inlineTranslation;
     
+    protected $date;
+    
     const STATUS_CANCEL_REQUEST = 'cancel_request';
     
     const XML_PATH_ENABLE_MODULE = 'ordercancel_section/general/enable_module';
@@ -22,21 +24,27 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     
     const XML_PATH_PENDING_ORDER_MESSAGE = 'ordercancel_section/general/ordercancel_message_pendingorder';
     
-    const XML_PATH_PAID_ORDER_MESSAGE = 'ordercancel_section/general/message_paidorder';
+    const XML_PATH_PAID_ORDER_MESSAGE = 'ordercancel_section/general/ordercancel_message_paidorder';
     
     const XML_PATH_EMAIL_IDENTITY = 'ordercancel_section/general/identity';
+    
+    const XML_PATH_POPUP_MESSAGE = 'ordercancel_section/general/ordercancel_confirmmessage';
+    
+    const XML_PATH_MAX_DAY = 'ordercancel_section/general/max_days_to_cancel';
     
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Mail\Template\TransportBuilder $transportBuilder,
-        \Magento\Framework\Translate\Inline\StateInterface $inlineTranslation
+        \Magento\Framework\Translate\Inline\StateInterface $inlineTranslation,
+        \Magento\Framework\Stdlib\DateTime\DateTime $date
     ) {
         parent::__construct($context);
         $this->scopeConfig = $context->getScopeConfig();
         $this->storeManager = $storeManager;
         $this->_transportBuilder=$transportBuilder;
         $this->inlineTranslation=$inlineTranslation;
+        $this->date = $date;
     }
     
     /**
@@ -109,6 +117,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function canCancel($order)
     {
         if (!$this->isModuleEnable()) {
+            return false;
+        }
+        
+        $maxDay = $this->getMaxDays();
+        
+        $orderDate = $this->date->gmtDate("Y-m-d",$order->getCreatedAt());
+        
+        $lastDate = strtotime("+" . $maxDay . " days", strtotime($orderDate));
+        
+        $currenttime = strtotime($this->date->gmtDate("Y-m-d"));
+        
+        if($currenttime > $lastDate) {
             return false;
         }
         
@@ -187,4 +207,27 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $transport->sendMessage();
         $this->inlineTranslation->resume();
     }
+    
+    /**
+     * Retrieve Popup Message for Confirmation
+     */
+    public function getPopupMessage()
+    {
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_POPUP_MESSAGE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+    }
+    
+    /**
+     * Retrieve Maximum days to cancel the order
+     */
+    public function getMaxDays()
+    {
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_MAX_DAY,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+    }
+    
 }

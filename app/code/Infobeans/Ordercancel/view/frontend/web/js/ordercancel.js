@@ -17,7 +17,7 @@ define(
                 type: 'popup',
                 responsive: true,
                 innerScroll: true,
-                title: 'Reason',
+                title: 'Reason*',
                 buttons: [{
                     text: $.mage.__('Submit'),
                     class: '',
@@ -36,7 +36,7 @@ define(
             
             confirmation({
                 title: 'Confirmation',
-                content: 'Are you sure you want to cancel the order',
+                content: window.popupConfirmMessage,
                 actions: {
                     confirm: function () {
                         if (window.isCommentEnable) {

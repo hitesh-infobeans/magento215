@@ -66,6 +66,7 @@
 </div>
 <script type="text/javascript">
     window.orderCancelUrl="<?php echo $block->getOrderCancelUrl(); ?>";   
+    window.popupConfirmMessage="<?php echo $this->helper('Infobeans\Ordercancel\Helper\Data')->getPopupMessage(); ?>";
     window.isCommentEnable=parseInt("<?php echo $this->helper('Infobeans\Ordercancel\Helper\Data')->isCommentEnable(); ?>");   
 </script> 
 <script type="text/x-magento-init">
